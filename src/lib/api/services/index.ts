@@ -11,3 +11,12 @@ export { documentsService } from "./documents.service";
 export { invoicesService } from "./invoices.service";
 export { invitesService } from "./invites.service";
 export { notificationsService } from "./notifications.service";
+export { dashboardService } from "./dashboard.service";
+export type {
+  DashboardOverview,
+  DashboardKpiMetric,
+  DashboardActivityItem,
+  DashboardRankedClient,
+  DashboardRankedRevenue,
+  DashboardTopDailyListing,
+} from "./dashboard.service";
