@@ -1,0 +1,11 @@
+export { authService } from "./auth.service";
+export { usersService } from "./users.service";
+export { firmsService } from "./firms.service";
+export { firmUsersService } from "./firm-users.service";
+export { clientsService } from "./clients.service";
+export { mattersService } from "./matters.service";
+export { hearingsService } from "./hearings.service";
+export { documentsService } from "./documents.service";
+export { invoicesService } from "./invoices.service";
+export { invitesService } from "./invites.service";
+export { notificationsService } from "./notifications.service";

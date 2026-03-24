@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LegalCRM SaaS Frontend
+
+A modern Legal CRM SaaS platform frontend built with Next.js, TypeScript, Tailwind CSS, ShadCN UI, and Formik.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** ShadCN UI (Base UI)
+- **Forms:** Formik + Yup validation
+- **HTTP Client:** Axios
+
+## Features
+
+### Public Website
+- Home, Features, About, Screens pages
+- Login and Signup with role selection (Firm, Lawyer, Client)
+
+### Dashboard (Role-Based)
+- **Firm Admin:** Dashboard, Clients, Matters, Hearings, Documents, Invoices, Users, Reports, Settings
+- **Lawyer:** Dashboard, Clients, Matters, Hearings, Documents, Invoices, Reports, Settings
+- **Client:** Dashboard, My Cases, Hearings, Documents, Invoices, Settings
+
+### Reusable Components
+- Layout: Sidebar, Navbar, PageHeader, DashboardCard
+- Tables: DataTable with loading/empty states
+- Modals: ModalWrapper, ConfirmDialog
+- Forms: FormikInputField, FormikSelectField, FormikTextareaField, FormikDatePicker, FormikFileUpload
+- UI: EmptyState, LoadingSkeleton, ProtectedRoute
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Demo Mode
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+When the API backend is not available, the app runs in demo mode:
+- **Login:** Any email/password will create a mock session
+- **Signup:** Creates a mock user with the selected role
 
-## Learn More
+Set `NEXT_PUBLIC_API_URL` to connect to your backend API.
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── (public)/          # Public pages with navbar/footer
+│   │   ├── page.tsx       # Home
+│   │   ├── features/
+│   │   ├── screens/
+│   │   ├── about/
+│   │   ├── login/
+│   │   └── signup/
+│   └── (dashboard)/       # Protected dashboard pages
+│       ├── dashboard/
+│       ├── clients/
+│       ├── matters/
+│       ├── hearings/
+│       ├── documents/
+│       ├── invoices/
+│       ├── users/
+│       ├── reports/
+│       ├── settings/
+│       ├── profile/
+│       └── my-cases/      # Client-specific
+├── components/
+│   ├── layout/
+│   ├── dashboard/
+│   ├── tables/
+│   ├── modals/
+│   └── ui/
+├── formik/                # Formik field components
+├── hooks/
+├── lib/api/               # Axios client and API modules
+└── types/
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_API_URL` | Backend API base URL (default: http://localhost:3001/api) |
