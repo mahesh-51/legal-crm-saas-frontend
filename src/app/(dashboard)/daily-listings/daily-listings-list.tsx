@@ -116,11 +116,10 @@ export function DailyListingsList() {
   const rows = useAppSelector((s) => s.dailyListings.items);
   const { total, totalPages, isLoading, error } = useAppSelector((s) => s.dailyListings);
 
-  const today = localTodayIso();
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [dateFrom, setDateFrom] = useState(today);
-  const [dateTo, setDateTo] = useState(today);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
 
