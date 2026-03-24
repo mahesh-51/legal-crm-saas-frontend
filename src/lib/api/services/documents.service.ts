@@ -1,12 +1,16 @@
 import { apiClient } from "../axios";
-import type { Document } from "@/types";
+import type { Document, DocumentCategory } from "@/types";
 
 export const documentsService = {
-  upload: (matterId: string, file: File) => {
+  upload: (
+    matterId: string,
+    file: File,
+    category: DocumentCategory = "GENERAL"
+  ) => {
     const formData = new FormData();
     formData.append("file", file);
     return apiClient.post<Document>(
-      `/documents/matter/${matterId}/upload`,
+      `/documents/matter/${matterId}/upload?category=${category}`,
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );

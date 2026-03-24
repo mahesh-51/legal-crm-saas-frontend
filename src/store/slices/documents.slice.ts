@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { documentsService } from "@/lib/api/services/documents.service";
 import { toApiError } from "@/lib/api/error-handler";
-import type { Document } from "@/types";
+import type { Document, DocumentCategory } from "@/types";
 
 export const fetchDocumentsByMatter = createAsyncThunk(
   "documents/fetchByMatter",
@@ -18,11 +18,15 @@ export const fetchDocumentsByMatter = createAsyncThunk(
 export const uploadDocument = createAsyncThunk(
   "documents/upload",
   async (
-    { matterId, file }: { matterId: string; file: File },
+    {
+      matterId,
+      file,
+      category,
+    }: { matterId: string; file: File; category?: DocumentCategory },
     { rejectWithValue }
   ) => {
     try {
-      const { data } = await documentsService.upload(matterId, file);
+      const { data } = await documentsService.upload(matterId, file, category);
       return data;
     } catch (err) {
       return rejectWithValue(toApiError(err));

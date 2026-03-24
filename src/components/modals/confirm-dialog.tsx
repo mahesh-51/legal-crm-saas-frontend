@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -18,6 +19,7 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: "default" | "destructive";
+  /** Called when the user confirms; dialog closes after this resolves successfully */
   onConfirm: () => void | Promise<void>;
 }
 
@@ -33,6 +35,11 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleOpenChange = (next: boolean) => {
+    if (!next && isLoading) return;
+    onOpenChange(next);
+  };
+
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
@@ -44,26 +51,28 @@ export function ConfirmDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md" showCloseButton={!isLoading}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+          <DialogDescription className="text-left">{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button
+            type="button"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={() => handleOpenChange(false)}
             disabled={isLoading}
           >
             {cancelLabel}
           </Button>
           <Button
+            type="button"
             variant={variant === "destructive" ? "destructive" : "default"}
             onClick={handleConfirm}
             disabled={isLoading}
           >
-            {isLoading ? "Loading..." : confirmLabel}
+            {isLoading ? "Please wait…" : confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

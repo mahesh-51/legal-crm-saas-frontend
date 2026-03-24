@@ -1,15 +1,28 @@
 import { apiClient } from "../axios";
-import type { Hearing } from "@/types";
+import type { Hearing, HearingStatus } from "@/types";
 
 export interface CreateHearingDto {
   matterId: string;
-  hearingDate: string;
+  clientId: string;
+  caseType?: string;
+  caseNo?: string;
+  complainants: string[];
+  defendants: string[];
+  status: HearingStatus;
+  currentDate: string;
+  nextDate?: string;
   synopsis?: string;
   orders?: string;
 }
 
 export interface UpdateHearingDto {
-  hearingDate?: string;
+  caseType?: string;
+  caseNo?: string;
+  complainants?: string[];
+  defendants?: string[];
+  status?: HearingStatus;
+  currentDate?: string;
+  nextDate?: string;
   synopsis?: string;
   orders?: string;
 }

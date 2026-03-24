@@ -3,6 +3,8 @@ export { usersService } from "./users.service";
 export { firmsService } from "./firms.service";
 export { firmUsersService } from "./firm-users.service";
 export { clientsService } from "./clients.service";
+export { courtTypesService } from "./court-types.service";
+export { courtNamesService } from "./court-names.service";
 export { mattersService } from "./matters.service";
 export { hearingsService } from "./hearings.service";
 export { documentsService } from "./documents.service";

@@ -38,10 +38,10 @@ export function FormikDatePicker({
           <Button
             variant="outline"
             disabled={disabled}
-            className={`w-full justify-start text-left font-normal ${className}`}
+            className={`h-10 w-full justify-start text-left font-normal ${className}`}
             aria-invalid={meta.touched && !!meta.error}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
             {dateValue ? format(dateValue, "PPP") : placeholder}
           </Button>
         </PopoverTrigger>

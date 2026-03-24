@@ -3,6 +3,7 @@ import { authService, type LoginCredentials, type SignupFirmCredentials, type Si
 import { usersService } from "@/lib/api/services/users.service";
 import { setAccessToken, clearAccessToken, toApiError } from "@/lib/api/error-handler";
 import type { User } from "@/types";
+import { normalizeUser } from "@/lib/user-role";
 
 export const login = createAsyncThunk(
   "auth/login",
@@ -11,7 +12,7 @@ export const login = createAsyncThunk(
       const { data } = await authService.login(credentials);
       const token = data.accessToken ?? data.token;
       if (token) setAccessToken(token);
-      return data.user;
+      return normalizeUser(data.user);
     } catch (err) {
       return rejectWithValue(toApiError(err));
     }
@@ -25,7 +26,7 @@ export const signupFirm = createAsyncThunk(
       const { data } = await authService.signupFirm(credentials);
       const token = data.accessToken ?? data.token;
       if (token) setAccessToken(token);
-      return data.user;
+      return normalizeUser(data.user);
     } catch (err) {
       return rejectWithValue(toApiError(err));
     }
@@ -39,7 +40,7 @@ export const signupIndividual = createAsyncThunk(
       const { data } = await authService.signupIndividual(credentials);
       const token = data.accessToken ?? data.token;
       if (token) setAccessToken(token);
-      return data.user;
+      return normalizeUser(data.user);
     } catch (err) {
       return rejectWithValue(toApiError(err));
     }
@@ -51,7 +52,7 @@ export const fetchMe = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await usersService.getMe();
-      return data;
+      return normalizeUser(data);
     } catch (err) {
       return rejectWithValue(toApiError(err));
     }
@@ -77,7 +78,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, { payload }) => {
-      state.user = payload;
+      state.user = payload ? normalizeUser(payload) : null;
       state.isAuthenticated = !!payload;
     },
     logout: (state) => {

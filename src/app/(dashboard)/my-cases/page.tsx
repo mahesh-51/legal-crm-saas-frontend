@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
 import { useCurrentFirmId } from "@/hooks/use-current-firm";
 import { fetchMatters } from "@/store/slices/matters.slice";
-import { useThunkErrorToast } from "@/hooks/use-thunk-error-toast";
 
 const statusColors: Record<string, string> = {
   OPEN: "bg-blue-500/10 text-blue-700",
@@ -18,23 +17,26 @@ const statusColors: Record<string, string> = {
 };
 
 const columns: Column<Matter>[] = [
-  { key: "caseTitle", header: "Case" },
-  { key: "caseType", header: "Type" },
+  {
+    key: "matterName",
+    header: "Case",
+    render: (m) => m.matterName ?? m.caseTitle ?? "—",
+  },
   {
     key: "status",
     header: "Status",
-    render: (m) => <Badge className={statusColors[m.status] ?? "bg-muted"}>{m.status}</Badge>,
+    render: (matter) => (
+      <Badge className={statusColors[matter.status] ?? "bg-muted"}>{matter.status}</Badge>
+    ),
   },
-  { key: "createdAt", header: "Opened" },
+  { key: "createdAt", header: "Created" },
 ];
 
 export default function MyCasesPage() {
   const firmId = useCurrentFirmId();
   const dispatch = useAppDispatch();
-  const matters = useAppSelector((s) => s.matters.list);
-  const { isLoading, error } = useAppSelector((s) => s.matters);
+  const { list: matters, isLoading } = useAppSelector((s) => s.matters);
 
-  useThunkErrorToast(error);
   useEffect(() => {
     if (firmId) dispatch(fetchMatters({ firmId }));
   }, [dispatch, firmId]);
@@ -42,15 +44,15 @@ export default function MyCasesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="My matters"
-        description="Matters where you are counsel of record"
+        title="My cases"
+        description="Matters assigned to you"
       />
       <DataTable
         data={matters}
         columns={columns}
         keyExtractor={(m) => m.id}
-        emptyTitle="No matters"
-        emptyDescription="Your assigned matters will appear here."
+        emptyTitle="No cases"
+        emptyDescription="You have no matters assigned yet."
         isLoading={isLoading}
       />
     </div>

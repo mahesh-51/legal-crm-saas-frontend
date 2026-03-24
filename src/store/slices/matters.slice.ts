@@ -7,6 +7,7 @@ import {
 } from "@/lib/api/services/matters.service";
 import { toApiError } from "@/lib/api/error-handler";
 import type { Matter } from "@/types";
+import { normalizeMatter } from "@/lib/api/normalize-matter";
 
 export const fetchMatters = createAsyncThunk(
   "matters/fetchAll",
@@ -35,7 +36,7 @@ export const fetchMatterById = createAsyncThunk(
 export const createMatter = createAsyncThunk(
   "matters/create",
   async (
-    { firmId, payload }: { firmId: string; payload: Omit<CreateMatterDto, "firmId"> },
+    { firmId, payload }: { firmId: string; payload: CreateMatterDto },
     { rejectWithValue }
   ) => {
     try {
@@ -106,7 +107,7 @@ const mattersSlice = createSlice({
 
     builder
       .addCase(fetchMatters.fulfilled, (state, { payload }) => {
-        state.list = payload;
+        state.list = payload.map(normalizeMatter);
         state.isLoading = false;
         state.error = null;
       })
@@ -118,19 +119,20 @@ const mattersSlice = createSlice({
         handleRejected(state, action);
       })
       .addCase(fetchMatterById.fulfilled, (state, { payload }) => {
-        state.selected = payload;
+        state.selected = normalizeMatter(payload);
         state.error = null;
       })
       .addCase(fetchMatterById.rejected, handleRejected)
       .addCase(createMatter.fulfilled, (state, { payload }) => {
-        state.list.push(payload);
+        state.list.push(normalizeMatter(payload));
         state.error = null;
       })
       .addCase(createMatter.rejected, handleRejected)
       .addCase(updateMatter.fulfilled, (state, { payload }) => {
-        const idx = state.list.findIndex((m) => m.id === payload.id);
-        if (idx >= 0) state.list[idx] = payload;
-        if (state.selected?.id === payload.id) state.selected = payload;
+        const normalized = normalizeMatter(payload);
+        const idx = state.list.findIndex((m) => m.id === normalized.id);
+        if (idx >= 0) state.list[idx] = normalized;
+        if (state.selected?.id === normalized.id) state.selected = normalized;
         state.error = null;
       })
       .addCase(updateMatter.rejected, handleRejected)

@@ -24,6 +24,8 @@ interface DataTableProps<T> {
   isLoading?: boolean;
   emptyTitle?: string;
   emptyDescription?: string;
+  /** Optional icon above empty-state copy */
+  emptyIcon?: React.ReactNode;
 }
 
 export function DataTable<T>({
@@ -33,6 +35,7 @@ export function DataTable<T>({
   isLoading = false,
   emptyTitle = "No data",
   emptyDescription = "Get started by adding your first entry.",
+  emptyIcon,
 }: DataTableProps<T>) {
   if (isLoading) {
     return <LoadingSkeleton type="table" />;
@@ -41,6 +44,7 @@ export function DataTable<T>({
   if (data.length === 0) {
     return (
       <EmptyState
+        icon={emptyIcon}
         title={emptyTitle}
         description={emptyDescription}
       />
@@ -48,12 +52,15 @@ export function DataTable<T>({
   }
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm ring-1 ring-border/40">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent">
+          <TableRow className="border-border/60 hover:bg-transparent">
             {columns.map((col) => (
-              <TableHead key={col.key} className="font-medium">
+              <TableHead
+                key={col.key}
+                className="h-12 bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground first:rounded-tl-2xl last:rounded-tr-2xl"
+              >
                 {col.header}
               </TableHead>
             ))}
@@ -61,9 +68,12 @@ export function DataTable<T>({
         </TableHeader>
         <TableBody>
           {data.map((item) => (
-            <TableRow key={keyExtractor(item)}>
+            <TableRow
+              key={keyExtractor(item)}
+              className="border-border/50 transition-colors hover:bg-muted/35"
+            >
               {columns.map((col) => (
-                <TableCell key={col.key}>
+                <TableCell key={col.key} className="py-3.5 align-middle text-sm">
                   {col.render
                     ? col.render(item)
                     : (item as Record<string, unknown>)[col.key] as React.ReactNode}

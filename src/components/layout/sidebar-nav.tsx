@@ -12,6 +12,8 @@ import {
   UserCog,
   BarChart3,
   Settings,
+  Layers,
+  Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
@@ -26,6 +28,8 @@ const firmNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/clients", label: "Clients", icon: Users },
   { href: "/matters", label: "Matters", icon: Briefcase },
+  { href: "/court-types", label: "Court types", icon: Layers },
+  { href: "/court-names", label: "Court names", icon: Landmark },
   { href: "/hearings", label: "Hearings", icon: Calendar },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/invoices", label: "Invoices", icon: Receipt },
@@ -38,6 +42,8 @@ const lawyerNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/clients", label: "Clients", icon: Users },
   { href: "/matters", label: "Matters", icon: Briefcase },
+  { href: "/court-types", label: "Court types", icon: Layers },
+  { href: "/court-names", label: "Court names", icon: Landmark },
   { href: "/hearings", label: "Hearings", icon: Calendar },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/invoices", label: "Invoices", icon: Receipt },
