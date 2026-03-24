@@ -49,33 +49,38 @@ export function Sidebar({
     <Link
       href="/dashboard"
       className={cn(
-        "flex min-w-0 items-center font-semibold tracking-tight",
+        "flex min-w-0 items-center tracking-tight",
         opts.compact ? "justify-center" : "gap-0 text-base"
       )}
     >
       {opts.compact ? (
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2563eb]/10 text-sm font-bold text-[#2563eb]">
           L
         </span>
       ) : (
         <>
-          <span className="text-primary">Legal</span>
-          <span className="text-foreground">CRM</span>
+          <span className="font-semibold text-[#2563eb]">Legal</span>
+          <span className="font-bold text-neutral-900 dark:text-neutral-100">CRM</span>
         </>
       )}
     </Link>
   );
 
+  const userInitial =
+    user?.name?.trim()?.[0]?.toUpperCase() ??
+    user?.email?.[0]?.toUpperCase() ??
+    "?";
+
   const desktopAside = (
     <aside
       className={cn(
-        "hidden h-full shrink-0 flex-col border-r border-border bg-card/50 transition-[width] duration-200 ease-out lg:flex",
+        "hidden h-full shrink-0 flex-col border-r border-neutral-200 bg-white transition-[width] duration-200 ease-out dark:border-border dark:bg-sidebar lg:flex",
         collapsed ? "w-[4.25rem]" : "w-60"
       )}
     >
       <div
         className={cn(
-          "flex h-14 shrink-0 items-center border-b border-border",
+          "flex h-14 shrink-0 items-center border-b border-neutral-200 dark:border-border",
           collapsed ? "justify-center px-2" : "px-4"
         )}
       >
@@ -84,20 +89,50 @@ export function Sidebar({
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-4">
         <SidebarNav role={role} collapsed={collapsed} />
       </div>
-      <div className="flex shrink-0 justify-center border-t border-border p-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          onClick={() => onCollapsedChange(!collapsed)}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <ChevronLeft className="h-5 w-5" />
-          )}
-        </Button>
+      <div className="relative shrink-0 border-t border-neutral-200 dark:border-border">
+        {collapsed ? (
+          <div className="flex flex-col items-center gap-1 py-3">
+            <Link
+              href="/settings"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-600 text-sm font-medium text-white hover:bg-neutral-700"
+              aria-label="Settings"
+            >
+              {userInitial}
+            </Link>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500"
+              aria-label="Expand sidebar"
+              onClick={() => onCollapsedChange(false)}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+        ) : (
+          <div className="relative flex h-14 items-center px-3">
+            <Link
+              href="/settings"
+              className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-600 text-sm font-medium text-white hover:bg-neutral-700"
+              aria-label="Settings"
+            >
+              {userInitial}
+            </Link>
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="pointer-events-auto h-8 w-8 text-neutral-400 hover:text-neutral-600 dark:text-neutral-500"
+                aria-label="Collapse sidebar"
+                onClick={() => onCollapsedChange(true)}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   );
@@ -128,11 +163,11 @@ export function Sidebar({
           aria-hidden={!mobileOpen}
           inert={!mobileOpen ? true : undefined}
           className={cn(
-            "absolute inset-y-0 left-0 flex w-[min(18rem,100vw-2rem)] max-w-[100vw] flex-col border-r border-border bg-card shadow-lg transition-transform duration-200 ease-out",
+            "absolute inset-y-0 left-0 flex w-[min(18rem,100vw-2rem)] max-w-[100vw] flex-col border-r border-neutral-200 bg-white shadow-lg transition-transform duration-200 ease-out dark:border-border dark:bg-sidebar",
             mobileOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+          <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-neutral-200 px-4 dark:border-border">
             {brand({ compact: false })}
             <Button
               type="button"
@@ -147,6 +182,16 @@ export function Sidebar({
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto py-4">
             <SidebarNav role={role} onNavigate={onMobileClose} />
+          </div>
+          <div className="relative flex h-14 shrink-0 items-center border-t border-neutral-200 px-3 dark:border-border">
+            <Link
+              href="/settings"
+              onClick={onMobileClose}
+              className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-600 text-sm font-medium text-white hover:bg-neutral-700"
+              aria-label="Settings"
+            >
+              {userInitial}
+            </Link>
           </div>
         </aside>
       </div>

@@ -15,6 +15,11 @@ const cookieOptions: Cookies.CookieAttributes = {
 export function getErrorMessage(error: unknown): string {
   if (!error) return "An unexpected error occurred";
 
+  if (typeof error === "object" && error !== null && "message" in error) {
+    const m = (error as { message?: unknown }).message;
+    if (typeof m === "string" && m.trim()) return m;
+  }
+
   const axiosErr = error as AxiosError<{ message?: string; error?: string; errors?: Record<string, string[]> }>;
   const data = axiosErr.response?.data;
 

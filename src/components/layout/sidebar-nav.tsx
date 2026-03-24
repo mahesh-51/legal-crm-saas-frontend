@@ -80,7 +80,7 @@ export function SidebarNav({
   const navItems = getNavItems(role);
 
   return (
-    <nav className="flex flex-col gap-1 px-2">
+    <nav className="flex flex-col gap-0.5 px-2">
       {navItems.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
         const Icon = item.icon;
@@ -91,16 +91,23 @@ export function SidebarNav({
             title={collapsed ? item.label : undefined}
             onClick={onNavigate}
             className={cn(
-              "flex items-center rounded-lg py-2 text-sm font-medium transition-colors",
+              "group flex items-center rounded-lg py-2.5 text-sm font-medium transition-colors",
               collapsed
                 ? "justify-center px-2"
                 : "gap-3 px-3",
               isActive
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                ? "bg-[#1e3a5f] text-white shadow-sm dark:bg-[#1e3a5f] dark:text-white"
+                : "text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
             )}
           >
-            <Icon className="h-5 w-5 shrink-0" />
+            <Icon
+              className={cn(
+                "h-5 w-5 shrink-0 transition-colors",
+                isActive
+                  ? "text-white"
+                  : "text-neutral-500 group-hover:text-neutral-700 dark:text-neutral-500 dark:group-hover:text-neutral-300"
+              )}
+            />
             {!collapsed && <span className="truncate">{item.label}</span>}
           </Link>
         );

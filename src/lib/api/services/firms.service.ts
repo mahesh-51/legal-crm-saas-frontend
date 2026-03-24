@@ -1,5 +1,5 @@
 import { apiClient } from "../axios";
-import type { Firm } from "@/types";
+import type { Firm, FirmProfileType } from "@/types";
 
 export interface CreateFirmDto {
   name: string;
@@ -9,6 +9,14 @@ export interface CreateFirmDto {
 export interface UpdateFirmDto {
   name?: string;
   subdomain?: string;
+  profileType?: FirmProfileType;
+  address?: string | null;
+  phone?: string | null;
+  contactEmail?: string | null;
+  registrationNumber?: string | null;
+  websiteUrl?: string | null;
+  barEnrollmentNumber?: string | null;
+  contactPersonName?: string | null;
 }
 
 export const firmsService = {

@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
+import { NotificationsPanel } from "@/components/layout/notifications-panel";
 
 interface DashboardNavbarProps {
   /** Opens the mobile sidebar */
@@ -46,6 +47,7 @@ export function DashboardNavbar({
         <Menu className="h-5 w-5" />
       </Button>
       <div className="flex-1" />
+      <NotificationsPanel />
       <DropdownMenu>
         <DropdownMenuTrigger
           render={

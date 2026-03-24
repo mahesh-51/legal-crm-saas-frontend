@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService, type LoginCredentials, type SignupFirmCredentials, type SignupIndividualCredentials } from "@/lib/api/services/auth.service";
-import { usersService } from "@/lib/api/services/users.service";
+import {
+  usersService,
+  type UpdateMeDto,
+} from "@/lib/api/services/users.service";
 import { setAccessToken, clearAccessToken, toApiError } from "@/lib/api/error-handler";
 import type { User } from "@/types";
 import { normalizeUser } from "@/lib/user-role";
@@ -52,6 +55,18 @@ export const fetchMe = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await usersService.getMe();
+      return normalizeUser(data);
+    } catch (err) {
+      return rejectWithValue(toApiError(err));
+    }
+  }
+);
+
+export const updateMe = createAsyncThunk(
+  "auth/updateMe",
+  async (payload: UpdateMeDto, { rejectWithValue }) => {
+    try {
+      const { data } = await usersService.updateMe(payload);
       return normalizeUser(data);
     } catch (err) {
       return rejectWithValue(toApiError(err));
@@ -133,6 +148,13 @@ const authSlice = createSlice({
       })
       .addCase(fetchMe.pending, (state) => {
         state.isLoading = true;
+      })
+      .addCase(updateMe.fulfilled, (state, { payload }) => {
+        state.user = payload;
+        state.error = null;
+      })
+      .addCase(updateMe.rejected, (state, { payload }) => {
+        state.error = (payload as { message: string }).message;
       });
   },
 });

@@ -8,15 +8,40 @@ export type UserRole =
   | "lawyer"
   | "client";
 
+/** How the firm/workspace account is represented in settings (drives which profile fields apply). */
+export type FirmProfileType = "FIRM" | "INDIVIDUAL" | "CLIENT";
+
+export interface UserNotificationPreferences {
+  dailyListingReminders: boolean;
+  invoiceDueReminders: boolean;
+  documentUploadNotifications: boolean;
+}
+
 export interface User {
   id: string;
   email: string;
   name: string;
   role: UserRole;
+  /** Original `role` string from the API before `normalizeUserRole` (e.g. INDIVIDUAL, FIRM_ADMIN). */
+  rawRole?: string;
   avatar?: string;
   firmId?: string;
   /** When true, user may manage global (built-in) court catalog rows. */
   isSuperAdmin?: boolean;
+  /** Email / in-app notification toggles (Settings). */
+  notificationPreferences?: UserNotificationPreferences;
+  /**
+   * Contact / practice details when the user has no firm (`firmId` null).
+   * Persisted via `PATCH /users/me` for solo individuals and similar accounts.
+   */
+  address?: string | null;
+  phone?: string | null;
+  /** Public / practice contact email (may differ from login `email`). */
+  contactEmail?: string | null;
+  barEnrollmentNumber?: string | null;
+  contactPersonName?: string | null;
+  registrationNumber?: string | null;
+  websiteUrl?: string | null;
   createdAt?: string;
 }
 
@@ -31,6 +56,19 @@ export interface Firm {
   name: string;
   subdomain: string;
   logoUrl?: string;
+  /** Workspace entity type; controls which optional profile fields are used. */
+  profileType?: FirmProfileType | null;
+  address?: string | null;
+  phone?: string | null;
+  /** Public / office contact email for the workspace (not necessarily login email). */
+  contactEmail?: string | null;
+  /** FIRM: company registration or similar. */
+  registrationNumber?: string | null;
+  websiteUrl?: string | null;
+  /** INDIVIDUAL: bar council enrollment or equivalent. */
+  barEnrollmentNumber?: string | null;
+  /** CLIENT: primary contact person when the workspace represents a client organization. */
+  contactPersonName?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }

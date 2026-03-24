@@ -295,12 +295,12 @@ export function DashboardOverview() {
             </p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2 rounded-xl border border-border/60 bg-card/80 px-4 py-3 text-sm text-muted-foreground shadow-sm ring-1 ring-black/[0.03] backdrop-blur-sm">
+        {/* <div className="flex shrink-0 items-center gap-2 rounded-xl border border-border/60 bg-card/80 px-4 py-3 text-sm text-muted-foreground shadow-sm ring-1 ring-black/[0.03] backdrop-blur-sm">
           <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.75} />
           <span>
             Metrics refresh when you load this page
           </span>
-        </div>
+        </div> */}
       </div>
 
       {error && (

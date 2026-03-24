@@ -1,4 +1,4 @@
-import type { User, UserRole } from "@/types";
+import type { FirmProfileType, User, UserRole } from "@/types";
 
 /**
  * Maps API / DB role enums to the canonical UI roles used by navigation and routes.
@@ -23,8 +23,35 @@ export function normalizeUserRole(role: UserRole): UserRole {
 }
 
 export function normalizeUser(user: User): User {
+  /** Preserve API role across repeated normalization (role becomes canonical `lawyer` / `firm` / `client`). */
+  const rawRole = user.rawRole ?? String(user.role);
   return {
     ...user,
     role: normalizeUserRole(user.role),
+    rawRole,
   };
+}
+
+/**
+ * Maps the logged-in user's API role to the firm settings profile mode.
+ * Used so account type is not user-editable; it follows auth role.
+ */
+export function firmProfileTypeFromUser(
+  user: User | null,
+  firmProfileFallback?: FirmProfileType | null
+): FirmProfileType {
+  const raw = user?.rawRole?.toUpperCase() ?? "";
+  if (raw === "INDIVIDUAL") return "INDIVIDUAL";
+  if (raw === "CLIENT") return "CLIENT";
+  if (
+    raw === "FIRM_ADMIN" ||
+    raw === "LAWYER" ||
+    raw === "SUPER_ADMIN" ||
+    raw === "FIRM"
+  ) {
+    return "FIRM";
+  }
+  if (user?.role === "client") return "CLIENT";
+  if (firmProfileFallback) return firmProfileFallback;
+  return "FIRM";
 }
