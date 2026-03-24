@@ -49,7 +49,7 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" defaultChecked className="rounded" />
-                <span className="text-sm">Hearing reminders</span>
+                <span className="text-sm">Daily listing reminders</span>
               </label>
               <label className="flex items-center gap-2">
                 <input type="checkbox" defaultChecked className="rounded" />

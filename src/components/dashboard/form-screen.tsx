@@ -9,7 +9,7 @@ interface FormScreenProps {
   title: string;
   description?: string;
   children: React.ReactNode;
-  /** Wider layout for complex forms (matters, hearings) */
+  /** Wider layout for complex forms (matters, daily listings) */
   wide?: boolean;
 }
 

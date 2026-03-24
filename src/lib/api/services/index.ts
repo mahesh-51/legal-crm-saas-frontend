@@ -6,7 +6,7 @@ export { clientsService } from "./clients.service";
 export { courtTypesService } from "./court-types.service";
 export { courtNamesService } from "./court-names.service";
 export { mattersService } from "./matters.service";
-export { hearingsService } from "./hearings.service";
+export { dailyListingsService } from "./daily-listings.service";
 export { documentsService } from "./documents.service";
 export { invoicesService } from "./invoices.service";
 export { invitesService } from "./invites.service";

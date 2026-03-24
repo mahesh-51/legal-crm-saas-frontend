@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
 import {
@@ -14,10 +13,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/use-auth";
 
 interface DashboardNavbarProps {
+  /** Opens the mobile sidebar */
   onMenuClick?: () => void;
+  mobileSidebarOpen?: boolean;
 }
 
-export function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
+export function DashboardNavbar({
+  onMenuClick,
+  mobileSidebarOpen = false,
+}: DashboardNavbarProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
 
@@ -29,11 +33,14 @@ export function DashboardNavbar({ onMenuClick }: DashboardNavbarProps) {
     .slice(0, 2) || "U";
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-background/95 px-4 lg:px-6">
+    <header className="z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background px-3 sm:h-16 sm:gap-4 sm:px-4 lg:px-6">
       <Button
         variant="ghost"
         size="icon"
         className="lg:hidden"
+        aria-expanded={mobileSidebarOpen}
+        aria-controls="mobile-sidebar-nav"
+        aria-label="Open menu"
         onClick={onMenuClick}
       >
         <Menu className="h-5 w-5" />

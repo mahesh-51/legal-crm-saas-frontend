@@ -53,7 +53,7 @@ export function DataTable<T>({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm ring-1 ring-border/40">
-      <Table>
+      <Table className="w-full min-w-[640px]">
         <TableHeader>
           <TableRow className="border-border/60 hover:bg-transparent">
             {columns.map((col) => (

@@ -4,28 +4,28 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { FormScreen } from "@/components/dashboard/form-screen";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
-import { HearingForm } from "../_components/hearing-form";
+import { DailyListingForm } from "../_components/daily-listing-form";
 
-function NewHearingContent() {
+function NewDailyListingContent() {
   const searchParams = useSearchParams();
   const matterId = searchParams.get("matterId") ?? undefined;
 
   return (
     <FormScreen
-      backHref="/hearings"
-      title="New hearing"
-      description="Schedule a hearing with matter, dates, parties, and status."
+      backHref="/daily-listings"
+      title="New daily listing"
+      description="Add a court diary row with clients, parties, dates, and status."
       wide
     >
-      <HearingForm mode="create" defaultMatterId={matterId} />
+      <DailyListingForm mode="create" defaultMatterId={matterId} />
     </FormScreen>
   );
 }
 
-export default function NewHearingPage() {
+export default function NewDailyListingPage() {
   return (
     <Suspense fallback={<LoadingSkeleton type="form" />}>
-      <NewHearingContent />
+      <NewDailyListingContent />
     </Suspense>
   );
 }

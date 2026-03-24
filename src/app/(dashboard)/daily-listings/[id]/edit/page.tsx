@@ -4,22 +4,22 @@ import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { FormScreen } from "@/components/dashboard/form-screen";
 import { LoadingSkeleton } from "@/components/ui/loading-skeleton";
-import { HearingForm } from "../../_components/hearing-form";
+import { DailyListingForm } from "../../_components/daily-listing-form";
 import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
-import { fetchHearingById } from "@/store/slices/hearings.slice";
+import { fetchDailyListingById } from "@/store/slices/daily-listings.slice";
 
-export default function EditHearingPage() {
+export default function EditDailyListingPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
   const dispatch = useAppDispatch();
-  const selected = useAppSelector((s) => s.hearings.selected);
+  const selected = useAppSelector((s) => s.dailyListings.selected);
 
   useEffect(() => {
-    dispatch(fetchHearingById(id))
+    dispatch(fetchDailyListingById(id))
       .unwrap()
       .catch(() => {
-        router.replace("/hearings");
+        router.replace("/daily-listings");
       });
   }, [dispatch, id, router]);
 
@@ -29,12 +29,12 @@ export default function EditHearingPage() {
 
   return (
     <FormScreen
-      backHref="/hearings"
-      title="Edit hearing"
-      description="Update dates, parties, synopsis, orders, and status."
+      backHref="/daily-listings"
+      title="Edit daily listing"
+      description="Update clients, parties, dates, synopsis, orders, and status."
       wide
     >
-      <HearingForm mode="edit" hearing={selected} />
+      <DailyListingForm mode="edit" listing={selected} />
     </FormScreen>
   );
 }

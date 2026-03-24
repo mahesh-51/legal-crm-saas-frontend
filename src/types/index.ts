@@ -91,32 +91,36 @@ export interface Matter {
   caseTitle?: string;
 }
 
-export type HearingStatus =
+export type DailyListingStatus =
   | "SCHEDULED"
   | "COMPLETED"
   | "ADJOURNED"
   | "CANCELLED";
 
-export interface Hearing {
+/** @deprecated Use DailyListingStatus */
+export type HearingStatus = DailyListingStatus;
+
+export interface DailyListing {
   id: string;
   matterId: string;
-  clientId: string;
-  caseType?: string;
-  caseNo?: string;
-  complainants?: string[];
-  defendants?: string[];
-  status: HearingStatus;
+  /** Linked clients (co-parties); API requires the matter’s primary client in `clientIds` on write. */
+  clients?: Client[];
+  caseType?: string | null;
+  caseNo?: string | null;
+  complainants?: string[] | null;
+  defendants?: string[] | null;
+  status: DailyListingStatus;
   currentDate: string;
-  nextDate?: string;
-  synopsis?: string;
-  orders?: string;
+  nextDate?: string | null;
+  synopsis?: string | null;
+  orders?: string | null;
   matterTitle?: string;
   createdAt?: string;
   updatedAt?: string;
-  /** @deprecated Prefer currentDate */
-  hearingDate?: string;
-  title?: string;
 }
+
+/** @deprecated Use DailyListing */
+export type Hearing = DailyListing;
 
 export type DocumentCategory = "CASE_FILE" | "GENERAL";
 
