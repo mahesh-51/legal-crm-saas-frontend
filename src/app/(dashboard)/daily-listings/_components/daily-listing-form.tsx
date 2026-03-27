@@ -21,7 +21,9 @@ import { FormikInputField, FormikDatePicker, FormikSelectField } from "@/formik"
 import { Button } from "@/components/ui/button";
 import { FormSection } from "@/components/dashboard/form-section";
 import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
+import { useAuth } from "@/hooks/use-auth";
 import { useCurrentFirmId } from "@/hooks/use-current-firm";
+import { LinkedTasksMeetingsPanel } from "@/components/tasks-meetings/linked-tasks-meetings-panel";
 import { createDailyListing, updateDailyListing } from "@/store/slices/daily-listings.slice";
 import { fetchMatters } from "@/store/slices/matters.slice";
 import { fetchClients } from "@/store/slices/clients.slice";
@@ -179,6 +181,7 @@ type DailyListingFormProps =
 export function DailyListingForm(props: DailyListingFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { user } = useAuth();
   const firmId = useCurrentFirmId();
   const matters = useAppSelector((s) => s.matters.list);
   const clients = useAppSelector((s) => s.clients.list);
@@ -556,6 +559,18 @@ export function DailyListingForm(props: DailyListingFormProps) {
           );
         }}
       </Formik>
+      {props.mode === "edit" && (
+        <LinkedTasksMeetingsPanel
+          firmId={firmId}
+          matterId={props.listing.matterId}
+          dailyListingId={props.listing.id}
+          clientId={
+            matters.find((m) => m.id === props.listing.matterId)?.clientId ??
+            props.listing.clients?.[0]?.id
+          }
+          readOnly={user?.role === "client"}
+        />
+      )}
     </div>
   );
 }

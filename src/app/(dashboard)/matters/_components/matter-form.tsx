@@ -23,7 +23,9 @@ import { FormikInputField, FormikSelectField } from "@/formik";
 import { Button } from "@/components/ui/button";
 import { FormSection } from "@/components/dashboard/form-section";
 import { useAppDispatch, useAppSelector } from "@/hooks/use-redux";
+import { useAuth } from "@/hooks/use-auth";
 import { useCurrentFirmId } from "@/hooks/use-current-firm";
+import { LinkedTasksMeetingsPanel } from "@/components/tasks-meetings/linked-tasks-meetings-panel";
 import { createMatter, updateMatter } from "@/store/slices/matters.slice";
 import { fetchClients } from "@/store/slices/clients.slice";
 import {
@@ -176,6 +178,7 @@ type MatterFormProps =
 export function MatterForm(props: MatterFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { user } = useAuth();
   const firmId = useCurrentFirmId();
   const { list: clients } = useAppSelector((s) => s.clients);
   const [courtTypes, setCourtTypes] = useState<CourtType[]>([]);
@@ -415,6 +418,14 @@ export function MatterForm(props: MatterFormProps) {
           </>
         )}
       </Formik>
+      {props.mode === "edit" && (
+        <LinkedTasksMeetingsPanel
+          firmId={firmId}
+          matterId={props.matter.id}
+          clientId={props.matter.clientId}
+          readOnly={user?.role === "client"}
+        />
+      )}
     </div>
   );
 }

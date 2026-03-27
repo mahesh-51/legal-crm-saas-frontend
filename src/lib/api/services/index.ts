@@ -12,6 +12,8 @@ export { invoicesService } from "./invoices.service";
 export { invitesService } from "./invites.service";
 export { notificationsService } from "./notifications.service";
 export { dashboardService } from "./dashboard.service";
+export { tasksService } from "./tasks.service";
+export { meetingsService } from "./meetings.service";
 export type {
   DashboardOverview,
   DashboardKpiMetric,
@@ -19,4 +21,13 @@ export type {
   DashboardRankedClient,
   DashboardRankedRevenue,
   DashboardTopDailyListing,
+  DashboardUpcomingTaskRow,
+  DashboardUpcomingMeetingRow,
+  DashboardUpcomingReminderRow,
 } from "./dashboard.service";
+export type { Task, TaskKind, TaskStatus } from "./tasks.service";
+export type {
+  Meeting,
+  MeetingStatus,
+  MeetingLinkProvider,
+} from "./meetings.service";

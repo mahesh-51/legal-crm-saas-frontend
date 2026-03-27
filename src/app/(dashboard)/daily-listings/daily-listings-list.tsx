@@ -7,6 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IsoDatePicker } from "@/components/ui/iso-date-picker";
 import { cn } from "@/lib/utils";
+import { nativeSelectClassName } from "@/lib/native-select";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable, Column } from "@/components/tables/data-table";
 import type { DailyListing } from "@/types";
@@ -289,7 +290,10 @@ export function DailyListingsList() {
             <label className="flex items-center gap-2 text-sm text-muted-foreground">
               Per page
               <select
-                className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                className={nativeSelectClassName(
+                  "md",
+                  "rounded-md bg-background pl-2"
+                )}
                 value={limit}
                 onChange={(e) => {
                   setLimit(Number(e.target.value));

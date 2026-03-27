@@ -44,6 +44,49 @@ export interface DashboardTopDailyListing {
   status: string;
 }
 
+export type DashboardUpcomingTaskKind = "task" | "follow_up";
+export type DashboardUpcomingTaskStatus =
+  | "pending"
+  | "in_progress"
+  | "done"
+  | "cancelled";
+
+export interface DashboardUpcomingTaskRow {
+  id: string;
+  title: string;
+  kind?: DashboardUpcomingTaskKind;
+  status?: DashboardUpcomingTaskStatus;
+  dueAt?: string | null;
+  matterId?: string | null;
+  clientId?: string | null;
+}
+
+export type DashboardMeetingLinkProvider =
+  | "google_meet"
+  | "microsoft_teams"
+  | "zoom"
+  | "other";
+
+export interface DashboardUpcomingMeetingRow {
+  id: string;
+  title?: string | null;
+  startAt: string;
+  meetingUrl?: string | null;
+  meetingLinkProvider?: DashboardMeetingLinkProvider | null;
+  shareLinkWithClient?: boolean;
+  matterId?: string | null;
+  clientId?: string | null;
+}
+
+export interface DashboardUpcomingReminderRow {
+  source: "task" | "meeting";
+  title: string;
+  remindAt: string;
+  matterId?: string | null;
+  clientId?: string | null;
+  href?: string | null;
+}
+
 /** Full payload for the practice dashboard (one round-trip). */
 export interface DashboardOverview {
   kpis: {
@@ -51,6 +94,10 @@ export interface DashboardOverview {
     openMatters: DashboardKpiMetric;
     upcomingCourtDates: DashboardKpiMetric;
     invoicesOutstanding: DashboardKpiMetric;
+    /** Open tasks (not done / cancelled). */
+    pendingTasks?: DashboardKpiMetric;
+    /** Scheduled meetings with startAt in the next 14 days. */
+    upcomingMeetingsNextDays?: DashboardKpiMetric;
   };
   recentActivity: DashboardActivityItem[];
   /** Already sorted; UI shows top 5. */
@@ -60,12 +107,18 @@ export interface DashboardOverview {
   mattersByStatus: { status: string; count: number }[];
   /** e.g. last 6 months — labels are shown on the chart as-is. */
   mattersOpenedTrend: { period: string; count: number }[];
+  /** Up to 5 open tasks by due date. */
+  upcomingTasks?: DashboardUpcomingTaskRow[];
+  /** Up to 5 scheduled meetings in the next 14 days. */
+  upcomingMeetings?: DashboardUpcomingMeetingRow[];
+  /** Merged reminders in the next 7 days (tasks + meetings), up to 10. */
+  upcomingReminders?: DashboardUpcomingReminderRow[];
 }
 
 export const dashboardService = {
-  getOverview: (firmId: string, config?: { signal?: AbortSignal }) =>
+  getOverview: (firmId: string | null, config?: { signal?: AbortSignal }) =>
     apiClient.get<DashboardOverview>("/dashboard/overview", {
-      params: { firmId },
+      params: firmId ? { firmId } : {},
       signal: config?.signal,
     }),
 };

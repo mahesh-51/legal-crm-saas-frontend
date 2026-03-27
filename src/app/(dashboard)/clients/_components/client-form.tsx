@@ -21,7 +21,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { FormSection } from "@/components/dashboard/form-section";
 import { useAppDispatch } from "@/hooks/use-redux";
+import { useAuth } from "@/hooks/use-auth";
 import { useCurrentFirmId } from "@/hooks/use-current-firm";
+import { LinkedTasksMeetingsPanel } from "@/components/tasks-meetings/linked-tasks-meetings-panel";
 import { createClient, updateClient, fetchClientById } from "@/store/slices/clients.slice";
 import { clientsService, type KycKind } from "@/lib/api/services/clients.service";
 import { getPublicApiFileUrl } from "@/lib/public-file-url";
@@ -448,6 +450,7 @@ function ClientFormFields({
 export function ClientForm(props: ClientFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { user } = useAuth();
   const firmId = useCurrentFirmId();
   const [pendingKycFile, setPendingKycFile] = useState<File | null>(null);
 
@@ -565,6 +568,13 @@ export function ClientForm(props: ClientFormProps) {
           setPendingKycFile={setPendingKycFile}
         />
       </Formik>
+      {props.mode === "edit" && (
+        <LinkedTasksMeetingsPanel
+          firmId={firmId}
+          clientId={props.client.id}
+          readOnly={user?.role === "client"}
+        />
+      )}
     </div>
   );
 }

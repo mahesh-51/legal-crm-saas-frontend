@@ -7,8 +7,10 @@ import { format } from "date-fns";
 import {
   Activity,
   ArrowUpRight,
+  Bell,
   Briefcase,
   Calendar,
+  CheckSquare,
   Clock,
   CalendarClock,
   GanttChartSquare,
@@ -16,9 +18,9 @@ import {
   ListChecks,
   PieChart,
   Receipt,
-  Sparkles,
   TrendingUp,
   Users,
+  Video,
 } from "lucide-react";
 import {
   AreaChart,
@@ -34,6 +36,7 @@ import {
   dashboardService,
   type DashboardKpiMetric,
   type DashboardOverview,
+  type DashboardUpcomingReminderRow,
 } from "@/lib/api/services/dashboard.service";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -89,6 +92,30 @@ function formatMoney(amount: number, currency = "INR") {
   } catch {
     return `${currency} ${amount.toFixed(0)}`;
   }
+}
+
+function activityTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    "task.created": "Task created",
+    "meeting.created": "Meeting scheduled",
+  };
+  return labels[type] ?? type.replace(/\./g, " · ");
+}
+
+function reminderRowHref(row: DashboardUpcomingReminderRow): string | null {
+  if (row.href?.trim()) return row.href;
+  if (row.matterId) return `/matters/${row.matterId}/edit`;
+  if (row.clientId) return `/clients/${row.clientId}/edit`;
+  return null;
+}
+
+function matterClientEditHref(
+  matterId?: string | null,
+  clientId?: string | null
+): string | null {
+  if (matterId) return `/matters/${matterId}/edit`;
+  if (clientId) return `/clients/${clientId}/edit`;
+  return null;
 }
 
 function deltaTypeForPercent(
@@ -195,8 +222,8 @@ function DashboardSkeleton() {
         <Skeleton className="h-8 w-64 max-w-full rounded-lg" />
         <Skeleton className="h-4 w-96 max-w-full rounded-md" />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className="h-[7.5rem] rounded-xl" />
         ))}
       </div>
@@ -216,7 +243,7 @@ export function DashboardOverview() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!firmId) return;
+    if (!user) return;
     const ac = new AbortController();
     setError(null);
     setLoading(true);
@@ -232,7 +259,7 @@ export function DashboardOverview() {
         if (!ac.signal.aborted) setLoading(false);
       });
     return () => ac.abort();
-  }, [firmId]);
+  }, [firmId, user]);
 
   const donutData = useMemo(() => {
     const rows = data?.mattersByStatus ?? [];
@@ -253,15 +280,8 @@ export function DashboardOverview() {
   const revenueCurrency = data?.topRevenue?.[0]?.currency ?? "INR";
   const firstName = user?.name?.split(" ")[0] || "Counsel";
 
-  if (!firmId) {
-    return (
-      <Card className="border-amber-500/25 bg-amber-500/[0.06] shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-base">Workspace</CardTitle>
-          <CardDescription>Loading firm context…</CardDescription>
-        </CardHeader>
-      </Card>
-    );
+  if (!user) {
+    return null;
   }
 
   return (
@@ -322,7 +342,7 @@ export function DashboardOverview() {
 
       {data && (
         <div className="space-y-8">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <KpiCard
               title="Active clients"
               metric={data.kpis.activeClients}
@@ -333,23 +353,229 @@ export function DashboardOverview() {
               title="Open matters"
               metric={data.kpis.openMatters}
               icon={Briefcase}
-              delayMs={60}
+              delayMs={40}
             />
             <KpiCard
               title="Upcoming court dates"
               metric={data.kpis.upcomingCourtDates}
               icon={Calendar}
-              delayMs={120}
+              delayMs={80}
             />
             <KpiCard
               title="Invoices outstanding"
               metric={data.kpis.invoicesOutstanding}
               icon={Receipt}
-              delayMs={180}
+              delayMs={120}
+            />
+            <KpiCard
+              title="Pending tasks"
+              metric={data.kpis.pendingTasks ?? { value: 0 }}
+              icon={CheckSquare}
+              delayMs={160}
+            />
+            <KpiCard
+              title="Meetings (14 days)"
+              metric={data.kpis.upcomingMeetingsNextDays ?? { value: 0 }}
+              icon={CalendarClock}
+              delayMs={200}
             />
           </div>
 
-          <Card className="animate-dashboard-fade-up border-border/70 bg-card/95 shadow-md ring-1 ring-black/[0.03] backdrop-blur-sm" style={{ animationDelay: "200ms" }}>
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card
+              className="animate-dashboard-fade-up border-border/70 bg-card/95 shadow-md ring-1 ring-black/[0.03] backdrop-blur-sm"
+              style={{ animationDelay: "220ms" }}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-xl bg-primary/12 p-2.5 text-primary ring-1 ring-primary/15">
+                    <CheckSquare className="h-5 w-5" strokeWidth={1.75} />
+                  </div>
+                  <div>
+                    <CardTitle className="font-heading text-lg">Upcoming tasks</CardTitle>
+                    <CardDescription>Open items by due date</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {(data.upcomingTasks ?? []).length === 0 ? (
+                  <EmptyPanel
+                    icon={CheckSquare}
+                    title="No upcoming tasks"
+                    description="Tasks with due dates appear here."
+                  />
+                ) : (
+                  <ul className="space-y-3">
+                    {(data.upcomingTasks ?? []).slice(0, 5).map((t) => {
+                      const href = matterClientEditHref(t.matterId, t.clientId);
+                      const inner = (
+                        <>
+                          <p className="font-medium leading-snug">{t.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {t.dueAt
+                              ? format(new Date(t.dueAt), "PPp")
+                              : "No due date"}
+                            {t.kind === "follow_up" ? " · Follow-up" : ""}
+                          </p>
+                        </>
+                      );
+                      return (
+                        <li key={t.id}>
+                          {href ? (
+                            <Link
+                              href={href}
+                              className="block rounded-lg border border-border/50 bg-muted/10 p-3 transition-colors hover:border-primary/25 hover:bg-muted/20"
+                            >
+                              {inner}
+                            </Link>
+                          ) : (
+                            <div className="rounded-lg border border-border/50 bg-muted/10 p-3">
+                              {inner}
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card
+              className="animate-dashboard-fade-up border-border/70 bg-card/95 shadow-md ring-1 ring-black/[0.03] backdrop-blur-sm"
+              style={{ animationDelay: "260ms" }}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-xl bg-primary/12 p-2.5 text-primary ring-1 ring-primary/15">
+                    <Video className="h-5 w-5" strokeWidth={1.75} />
+                  </div>
+                  <div>
+                    <CardTitle className="font-heading text-lg">Upcoming meetings</CardTitle>
+                    <CardDescription>Next 14 days · scheduled</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {(data.upcomingMeetings ?? []).length === 0 ? (
+                  <EmptyPanel
+                    icon={Video}
+                    title="No meetings in window"
+                    description="Scheduled meetings with start times in the next two weeks."
+                  />
+                ) : (
+                  <ul className="space-y-3">
+                    {(data.upcomingMeetings ?? []).slice(0, 5).map((m) => {
+                      const href = matterClientEditHref(m.matterId, m.clientId);
+                      return (
+                        <li
+                          key={m.id}
+                          className="rounded-lg border border-border/50 bg-muted/10 p-3"
+                        >
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="min-w-0 flex-1">
+                              {href ? (
+                                <Link href={href} className="font-medium hover:underline">
+                                  {m.title?.trim() || "Meeting"}
+                                </Link>
+                              ) : (
+                                <p className="font-medium">{m.title?.trim() || "Meeting"}</p>
+                              )}
+                              <p className="text-xs text-muted-foreground">
+                                {format(new Date(m.startAt), "PPp")}
+                              </p>
+                            </div>
+                            {m.meetingUrl && (
+                              <a
+                                href={m.meetingUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={cn(
+                                  buttonVariants({ variant: "outline", size: "xs" }),
+                                  "inline-flex shrink-0 gap-1"
+                                )}
+                              >
+                                <Video className="h-3.5 w-3.5" />
+                                Join
+                              </a>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card
+              className="animate-dashboard-fade-up border-border/70 bg-card/95 shadow-md ring-1 ring-black/[0.03] backdrop-blur-sm"
+              style={{ animationDelay: "300ms" }}
+            >
+              <CardHeader className="pb-2">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-xl bg-primary/12 p-2.5 text-primary ring-1 ring-primary/15">
+                    <Bell className="h-5 w-5" strokeWidth={1.75} />
+                  </div>
+                  <div>
+                    <CardTitle className="font-heading text-lg">Reminders</CardTitle>
+                    <CardDescription>Next 7 days</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {(data.upcomingReminders ?? []).length === 0 ? (
+                  <EmptyPanel
+                    icon={Bell}
+                    title="No reminders due"
+                    description="Task and meeting reminders in the coming week."
+                  />
+                ) : (
+                  <ul className="space-y-2">
+                    {(data.upcomingReminders ?? []).slice(0, 10).map((r, idx) => {
+                      const href = reminderRowHref(r);
+                      const label =
+                        r.source === "task"
+                          ? "Task"
+                          : r.source === "meeting"
+                            ? "Meeting"
+                            : r.source;
+                      return (
+                        <li key={`${r.source}-${r.title}-${idx}`}>
+                          {href ? (
+                            <Link
+                              href={href}
+                              className="flex flex-col rounded-lg border border-border/50 bg-muted/10 px-3 py-2 transition-colors hover:border-primary/25 hover:bg-muted/20"
+                            >
+                              <span className="text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
+                                {label}
+                              </span>
+                              <span className="font-medium leading-snug">{r.title}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(r.remindAt), "PPp")}
+                              </span>
+                            </Link>
+                          ) : (
+                            <div className="flex flex-col rounded-lg border border-border/50 bg-muted/10 px-3 py-2">
+                              <span className="text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
+                                {label}
+                              </span>
+                              <span className="font-medium leading-snug">{r.title}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(r.remindAt), "PPp")}
+                              </span>
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="animate-dashboard-fade-up border-border/70 bg-card/95 shadow-md ring-1 ring-black/[0.03] backdrop-blur-sm" style={{ animationDelay: "340ms" }}>
             <CardHeader className="pb-2">
               <div className="flex items-start gap-3">
                 <div className="rounded-xl bg-primary/12 p-2.5 text-primary ring-1 ring-primary/15">
@@ -641,7 +867,7 @@ function ActivityRow({
         )}
         <p className="text-xs text-muted-foreground">
           <span className="rounded-md bg-muted/80 px-1.5 py-0.5 font-mono text-[0.65rem] uppercase tracking-wide text-muted-foreground">
-            {a.type}
+            {activityTypeLabel(a.type)}
           </span>
           <span className="mx-2 text-border">·</span>
           <span className="inline-flex items-center gap-1">

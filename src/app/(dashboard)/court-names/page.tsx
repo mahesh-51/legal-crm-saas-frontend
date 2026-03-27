@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable, Column } from "@/components/tables/data-table";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { nativeSelectClassName } from "@/lib/native-select";
 import { Label } from "@/components/ui/label";
 import { ConfirmDialog } from "@/components/modals/confirm-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -138,7 +139,10 @@ export default function CourtNamesPage() {
         <Label htmlFor="court-type-filter">Filter by court type</Label>
         <select
           id="court-type-filter"
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          className={nativeSelectClassName(
+            "lg",
+            "flex rounded-md bg-background py-2"
+          )}
           value={filterTypeId}
           onChange={(e) => setFilterTypeId(e.target.value)}
         >

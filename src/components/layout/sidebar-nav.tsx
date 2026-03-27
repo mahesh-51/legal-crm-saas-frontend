@@ -14,6 +14,8 @@ import {
   Settings,
   Layers,
   Landmark,
+  ListChecks,
+  Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
@@ -31,6 +33,8 @@ const firmNavItems: NavItem[] = [
   { href: "/court-types", label: "Court types", icon: Layers },
   { href: "/court-names", label: "Court names", icon: Landmark },
   { href: "/daily-listings", label: "Daily listing", icon: Calendar },
+  { href: "/tasks", label: "Tasks", icon: ListChecks },
+  { href: "/meetings", label: "Meetings", icon: Video },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/invoices", label: "Invoices", icon: Receipt },
   { href: "/users", label: "Users", icon: UserCog },
@@ -45,6 +49,8 @@ const lawyerNavItems: NavItem[] = [
   { href: "/court-types", label: "Court types", icon: Layers },
   { href: "/court-names", label: "Court names", icon: Landmark },
   { href: "/daily-listings", label: "Daily listing", icon: Calendar },
+  { href: "/tasks", label: "Tasks", icon: ListChecks },
+  { href: "/meetings", label: "Meetings", icon: Video },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/invoices", label: "Invoices", icon: Receipt },
   { href: "/reports", label: "Reports", icon: BarChart3 },
