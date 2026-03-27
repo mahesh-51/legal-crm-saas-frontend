@@ -18,7 +18,8 @@ import {
   Video,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { UserRole } from "@/types";
+import type { User, UserRole } from "@/types";
+import { hasModuleAccessForPath } from "@/lib/module-access";
 
 interface NavItem {
   href: string;
@@ -74,16 +75,18 @@ function getNavItems(role: UserRole): NavItem[] {
 
 export function SidebarNav({
   role,
+  user,
   collapsed = false,
   onNavigate,
 }: {
   role: UserRole;
+  user?: User | null;
   collapsed?: boolean;
   /** Called after a link is chosen (e.g. close mobile drawer) */
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
-  const navItems = getNavItems(role);
+  const navItems = getNavItems(role).filter((item) => hasModuleAccessForPath(user, item.href));
 
   return (
     <nav className="flex flex-col gap-0.5 px-2">

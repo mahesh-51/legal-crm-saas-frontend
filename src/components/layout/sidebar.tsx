@@ -87,7 +87,7 @@ export function Sidebar({
         {brand({ compact: collapsed })}
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden py-4">
-        <SidebarNav role={role} collapsed={collapsed} />
+        <SidebarNav role={role} user={user} collapsed={collapsed} />
       </div>
       <div className="relative shrink-0 border-t border-neutral-200 dark:border-border">
         {collapsed ? (
@@ -181,7 +181,7 @@ export function Sidebar({
             </Button>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto py-4">
-            <SidebarNav role={role} onNavigate={onMobileClose} />
+            <SidebarNav role={role} user={user} onNavigate={onMobileClose} />
           </div>
           <div className="relative flex h-14 shrink-0 items-center border-t border-neutral-200 px-3 dark:border-border">
             <Link

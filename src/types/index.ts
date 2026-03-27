@@ -43,6 +43,15 @@ export interface User {
   registrationNumber?: string | null;
   websiteUrl?: string | null;
   createdAt?: string;
+  /**
+   * True when this account joined through a firm invite and should be restricted
+   * by `modulePermissions`.
+   */
+  isInvitedUser?: boolean;
+  /** Effective membership role inside the firm workspace (for example: LAWYER). */
+  firmMembershipRole?: string;
+  /** Module/action access matrix returned by `/users/me`. */
+  modulePermissions?: ModulePermissionSelection[];
 }
 
 export interface AuthState {
@@ -203,6 +212,27 @@ export interface InviteInfo {
   role: string;
   firmId?: string;
   clientId?: string;
+  modulePermissions?: ModulePermissionSelection[];
+  /** Optional backend hint to auto-select login/signup flow. */
+  isEmailRegistered?: boolean;
+}
+
+export type FirmInviteRole = "FIRM_ADMIN" | "LAWYER";
+
+export interface ModuleActionItem {
+  module: string;
+  actions: string[];
+}
+
+export interface ModulePermissionSelection {
+  module: string;
+  actions: string[];
+}
+
+export interface InviteFirmUserPayload {
+  email: string;
+  role: FirmInviteRole;
+  modulePermissions?: ModulePermissionSelection[];
 }
 
 export interface ApiError {

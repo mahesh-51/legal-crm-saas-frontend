@@ -178,6 +178,7 @@ export default function SignupPage() {
                   label="Password"
                   type="password"
                   placeholder="••••••••"
+                  showPasswordToggle
                   className="h-10 rounded-lg border-border bg-white"
                 />
 

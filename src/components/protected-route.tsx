@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import type { UserRole } from "@/types";
+import { hasModuleAccessForPath } from "@/lib/module-access";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isLoading) return;
@@ -24,8 +26,13 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
     if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
       router.replace("/dashboard");
+      return;
     }
-  }, [isAuthenticated, isLoading, user, allowedRoles, router]);
+
+    if (!hasModuleAccessForPath(user, pathname)) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, isLoading, user, allowedRoles, pathname, router]);
 
   if (isLoading) {
     return (
@@ -36,6 +43,10 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (!isAuthenticated) {
+    return null;
+  }
+
+  if (!hasModuleAccessForPath(user, pathname)) {
     return null;
   }
 

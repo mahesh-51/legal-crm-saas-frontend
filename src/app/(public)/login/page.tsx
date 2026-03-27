@@ -81,6 +81,7 @@ export default function LoginPage() {
                 label="Password"
                 type="password"
                 placeholder="••••••••"
+                showPasswordToggle
               />
               <Button
                 type="submit"
